@@ -34,13 +34,7 @@ class BoardModalForm(forms.Form):
         board.save()
 
 class MembersModalForm(forms.Form):
-    """
-        This class is for handlong member forms, cleaning, and actions
-    """
-
     def __init__(self, *args, **kwargs):
-        # This would allow the passing of variables to the clean method
-        # Returns None if no value is passed
         self.board_id = kwargs.pop('board_id', None)
         super(MembersModalForm, self).__init__(*args, **kwargs)
 
