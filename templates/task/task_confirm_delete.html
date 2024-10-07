@@ -1,0 +1,23 @@
+{% extends 'app/base.html' %}
+{% block title %}タスクの削除{% endblock %}
+{% block content %}
+
+<div class="heading">
+    <div class="fb heading-wrap">
+        <div class="heading-title">
+            <h1>タスクの削除</h1>
+        </div>
+    </div>
+</div>
+
+<div class="card-body">
+    <form method="POST">
+        {% csrf_token %}
+        <p>このタスク<b>"{{task}}"</b>を本当に削除してもよろしいでしょうか？</p>
+        <input class="button" type="submit" value="削除する" />
+    </form>
+</div>
+
+
+
+{% endblock content %}

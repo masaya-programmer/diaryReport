@@ -1,0 +1,85 @@
+.commonSidebar {
+  height: calc(100vh - 50px);
+  width: 300px;
+  position: fixed;
+  top: 50px;
+  left: 0;
+  z-index: 100;
+
+  &.is-open {
+    display: block !important;
+  }
+
+  &.is-pcopen {
+    display: none;
+  }
+
+  .sidebarInner {
+    height: 100%;
+    background-color: #222d32;
+    color: #fff;
+
+    .commonNav {
+      height: calc(100% - 50px);
+      overflow-y: scroll;
+      width: 100%;
+
+      svg {
+        width: 24px;
+        height: 24px;
+      }
+
+      ul {
+        margin-top: 0;
+      }
+
+      .sidebar-close {
+        margin-top: 3em;
+      }
+
+      .list {
+        li {
+          margin-bottom: 0;
+          margin-top: 0;
+
+          a {
+            display: flex;
+            align-items: center;
+            padding: .6em 1em;
+
+            span[class^="material-icons"] {
+              margin-right: 8px;
+            }
+          }
+          li{
+            a{
+              padding-left: 2.9em;
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+body.sidebar-open-pc {
+  .container {
+    width: 100vw;
+    left: auto;
+  }
+}
+
+
+/*  --------------------------------------------------------------- 
+  960以下（600pxで問題ないかどうか）
+  --------------------------------------------------------------- */
+@media screen and (max-width: 960px) {
+
+  .commonSidebar {
+    display: none;
+
+    &.is-pcopen {
+      display: none;
+    }
+  }
+}

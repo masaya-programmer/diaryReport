@@ -1,0 +1,24 @@
+{% extends 'app/base.html' %}
+{% block title %}タスクの詳細{% endblock title %}
+{% block content %}
+
+<div class="heading">
+    <div class="fb heading-wrap">
+        <div class="heading-title">
+            <h1>タスクの詳細</h1>
+        </div>
+    </div>
+</div>
+
+<div class="card-body">
+    <form method="POST" action="" class="p-memo">
+        {% csrf_token %}
+        {{form.as_p}}
+        <div class="tc">
+            <button class="btn btn-flat" type="submit">保存</button>
+        </div>
+    </form>
+</div>
+
+
+{% endblock content %}

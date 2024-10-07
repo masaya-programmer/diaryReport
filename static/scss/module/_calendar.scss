@@ -1,0 +1,315 @@
+.done_task_calendar_show .month-table .date-task .task-box.ok {
+  display: none;
+}
+
+.task-modal{
+    .modal-inner{
+      padding: 2em;
+      textarea{
+        width: 100%;
+      }
+      .modal-form{
+        p{
+          margin-bottom: 1em;
+          &:last-child{
+            margin-bottom: 0;
+          }
+        }
+      }
+    }
+}
+
+.month-table {
+  width: 100%;
+
+  .week-name {
+    th {
+      text-align: center;
+      padding-bottom: .5em;
+      font-weight: normal;
+    }
+  }
+
+  .date-in {
+    z-index: 30;
+  }
+
+  .dateDiv {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+  }
+
+  .date-task {
+    .task-box {
+      margin-bottom: .5em;
+      background: var(--btn-success);
+      border: none;
+      padding: .5em 0;
+      padding-left: 0;
+      font-size: 13px;
+      border-radius: 3px;
+      position: relative;
+      z-index: 30;
+      cursor: pointer;
+
+      &.des {
+          background: #036839;
+        }
+
+      .meta-box {
+        display: none;
+      }
+
+      &:hover {
+        .meta-box {
+          display: block;
+        }
+      }
+
+      .ECM_CheckboxInput {
+        display: flex;
+        align-items: center;
+        cursor: pointer;
+        justify-content: space-between;
+
+        label {
+          width: auto;
+          padding-left: 1em;
+          margin-bottom: 0;
+          height: 20px;
+        }
+      }
+
+      .ECM_CheckboxInput-Input {
+        margin: 0;
+        width: 0;
+        opacity: 0;
+      }
+
+      .ECM_CheckboxInput:hover {
+        background: rgba(0, 0, 0, .05) !important;
+      }
+
+      .ECM_CheckboxInput-Input:checked+.ECM_CheckboxInput-DummyInput {
+        background: #333333;
+      }
+
+      .ECM_CheckboxInput-Input:checked+.ECM_CheckboxInput-DummyInput::before {
+        content: "";
+        display: block;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 40%;
+        height: 4px;
+        border-radius: 2px;
+        transform: translate(-6px, 5px) rotateZ(-135deg);
+        transform-origin: 2px 2px;
+        background: #FFFFFF;
+      }
+
+      .ECM_CheckboxInput-Input:checked+.ECM_CheckboxInput-DummyInput::after {
+        content: "";
+        display: block;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 76%;
+        height: 4px;
+        border-radius: 2px;
+        transform: translate(-6px, 5px) rotateZ(-45deg);
+        transform-origin: 2px 2px;
+        background: #FFFFFF;
+      }
+
+      .ECM_CheckboxInput-DummyInput {
+        position: relative;
+        top: -17px;
+        left: 0;
+        display: block;
+        width: 20px;
+        height: 20px;
+        border: solid 2px transparent;
+        background: #fff;
+        border-radius: 4px;
+      }
+
+      .ECM_CheckboxInput-LabelText {
+        width: calc(100% - 40px);
+        display: block;
+
+        span {
+          display: block;
+        }
+      }
+
+      &.ok {
+        opacity: .3;
+      }
+
+      p {
+        line-height: 1.3;
+      }
+
+      &:last-child {
+        margin-bottom: 0;
+      }
+    }
+  }
+
+  .modal {
+    .modal-inner {
+      padding: 2em;
+
+      .modal-content {
+        .modal-form {
+          >p {
+            margin-bottom: 1em;
+
+            &:last-child {
+              margin-bottom: 0;
+            }
+          }
+
+          textarea {
+            width: 100%;
+          }
+        }
+      }
+    }
+  }
+
+  td {
+    border: 1px solid var(--border-grey);
+    width: calc(100% / 7);
+    position: relative;
+
+    >div {
+      padding: 0 0 1em;
+      height: auto;
+      min-height: 140px;
+
+      .date {
+        margin-bottom: 2.5em;
+        padding: 0 1em;
+
+        .date-span{
+          position: absolute;
+          top: -1px;
+          left: 16px;
+          font-size: 13px;
+          display: flex;
+          justify-content: flex-start;
+          align-items: center;
+          width: auto;
+          height: 36px;
+          // border: 1px solid var(--border-grey);
+        }
+
+        span {
+          display: inline-block;
+          line-height: 1;
+        }
+
+        .meta-box{
+          display: flex;
+          position: absolute;
+          right: 1em;
+          top:6px;
+          font-size: 13px;
+          .percent{
+            margin-right: .5em;
+          }
+        }
+        
+      }
+    }
+
+    &.today {
+      background: var(--bg-header);
+    }
+  }
+}
+
+.calendar-head {
+  margin-bottom: 1em;
+
+  &.month {
+    >.fb {
+
+      .arrow-box {
+        margin-right: 12px;
+      }
+
+      .icon-btn {
+        display: inline-block;
+        padding: .5em;
+        line-height: 1;
+        background: var(--bg-main2);
+        border-radius: 3px;
+        cursor: pointer;
+        margin-left: .6em;
+
+        &:first-child {
+          margin-left: 0;
+        }
+      }
+
+      .now-date {
+        font-weight: bold;
+        font-size: 1.1em;
+      }
+    }
+  }
+}
+
+.schedules-box {
+  .schedule-summary {
+    background: var(--btn-success);
+    line-height: 1.2;
+    padding: 0 .8em;
+    border-radius: 2px;
+    margin-bottom: .2em;
+  }
+}
+
+
+/*  --------------------------------------------------------------- 
+  600以下（600pxで問題ないかどうか）
+  --------------------------------------------------------------- */
+@media screen and (max-width: 600px) {
+  .month-table {
+    td {
+      >div {
+        padding: .3em 0 .4em;
+
+        .date {
+          font-size: 11px;
+        }
+      }
+    }
+
+    .date-wrap {
+      min-height: 60px;
+    }
+
+    .date-task {
+      .task-box {
+        font-size: 10px;
+        letter-spacing: -.01em;
+        padding: 1em .3em .1em;
+        line-height: 1.3;
+        .ECM_CheckboxInput {
+          flex-wrap: wrap;
+          >label,
+            .ECM_CheckboxInput-LabelText{
+            width: 100%;
+          }
+        }
+      }
+    }
+  }
+}

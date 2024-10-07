@@ -1,0 +1,31 @@
+{% extends "app/base.html" %}
+{% block content %}
+<div class="heading">
+    <div class="fb heading-wrap">
+        <div class="heading-title">
+            <h1>プロフィール</h1>
+        </div>
+    </div>
+</div>
+
+
+<div class="simple-table">
+    <div class="table-content">
+        <p class="title">メールアドレス</p>
+        <p>{{ user.email }}</p>
+    </div>
+    <div class="table-content">
+        <p class="title">ユーザネーム</p>
+        <p>{{ user.name }}</p>
+    </div>
+    <div class="table-content">
+        <p class="title">自己紹介</p>
+        <p>{{ user.introduction }}</p>
+    </div>
+</div>
+
+<div class="tc">
+    <a class="btn btn-flat" href="{% url 'register:user_update' user.pk %}">プロフィール編集</a>
+</div>
+
+{% endblock %}

@@ -1,0 +1,199 @@
+{% extends 'app/base.html' %}
+
+{% load static %}
+{% load md5url %}
+
+{% block title %}{{ timelines.title }}{% endblock %}
+{% block content %}
+
+
+<div class="heading fixed-header modalContainer">
+  <div class="fb heading-wrap">
+    <div class="heading-title">
+      <h1>{{ timelines.title }}</h1>
+    </div>
+    <div class="info fb">
+      <div class="persent-box fb">
+        <div class="moveBtn">
+          <span class="material-icons-outlined" id="moveBtn">restart_alt</span>
+        </div>
+        <p><span id="persentNumber"></span><span class="persent">%</span>
+          <span class="mini-info">(<span id="doneChecks"></span>/<span id="ChecksAll"></span>)</span></p>
+      </div>
+      <div class="icons-menu-wrap">
+        <div class="icon-item-wrap icon-menu-modal">
+          <a class="modal-open icon-menu-item fb" data-modal-open="menu1">
+            <i class="fas fa-ellipsis-h"></i>
+          </a>
+          <div class="modal icon-menu-modal-wrap" data-modal="menu1">
+            <div class="modal-cover btn-close"></div>
+            <div class="modal-inner">
+              <div class="modal-content">
+                <ul class="modal-ul">
+                  <li>
+                    <ul class="mt0">
+                      <li class="menu-li">
+                        <a class="menu-list" href="{% url 'app:RoutineCreate' %}">項目を追加</a>
+                      </li>
+                      <li class="menu-li">
+                        <a class="menu-list" href="{% url 'app:TimelineUpdate' timelines.pk %}">タイムラインを編集</a>
+                      </li>
+                      <li class="menu-li">
+                        <a class="menu-list" href="{% url 'app:TimelineShare' timelines.pk %}">タイムラインを共有</a>
+                      </li>
+                      <li class="menu-li">
+                        <p class="menu-list" id="checkBoxReset">チェックをリセット</p>
+                      </li>
+                    </ul>
+                  </li>
+                  <li>
+                    <ul class="mt0">
+                      <li class="menu-li">
+                        <a target="_blank" class="menu-list" href="{% url 'app:pdf_view' timelines.pk %}">PDFで表示</a>
+                      </li>
+                      <li class="menu-li">
+                        <a target="_blank" class="menu-list" href="{% url 'app:pdf_download' timelines.pk %}">PDFでダウンロード</a>
+                      </li>
+                    </ul>
+                  </li>
+                  <li class="menu-li">
+                    <p><a class="menu-list" href="{% url 'app:TimelineDelete' timelines.pk %}">タイムラインを削除</a></p>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="basewrapper modalContainer">
+  <div class="inner timeline">
+
+    {% for item in timeline_items %}
+    <!-- アイコンと見出しのセット -->
+    <div class="unit {% if item.completed %}done{% else %}undone{% endif %}">
+      <!-- 真ん中のラインのアイコン -->
+      <div class="icon">
+        <p>{{ item.start_time }}
+          {% if item.end_time %}
+          <br>〜<br>{{ item.end_time }}
+          {% endif %}
+        </p>
+      </div>
+      <!-- //真ん中のラインのアイコン -->
+
+      <!-- 見出し -->
+      <a href="{% url 'app:RoutineUpdate' item.pk %}" class="h2-title">
+        {% if item.completed %}
+        <!-- <div class="done-wrap fb">
+            <p class="fb">
+              <span class="material-icons-outlined check-icon">
+                check_circle
+              </span>
+              <span class="text">完了</span>
+              </p>
+          </div> -->
+        {% endif %}
+        <div class="left">
+          <div class="fb top">
+            <div class="fb">
+              <input type="checkbox" class="taskCheck" data-pk="{{ item.pk }}" {% if item.completed %}checked{% endif %}>
+              <span class="dib title">{{ item.title }}</span>
+              {% if user.timeline_settings_category_show == "show" %}
+              <span class="dib cate">
+                {{ item.category }}
+              </span>
+              {% endif %}
+            </div>
+          </div>
+          {% if item.description %}
+          <div class="bottom">{{ item.description | linebreaks }}</div>
+          {% endif %}
+        </div>
+        <!-- <div class="right">
+          <span>{{ item.start_time }}</span>
+          </div> -->
+      </a>
+      <!-- //見出し -->
+    </div>
+    <!-- //アイコンと見出しのセット -->
+
+    {% empty %}
+    <div class="tc">
+      <p class="mb1">タイムラインの項目がありません。</p>
+      <button class="btn btn-flat modal-open" data-modal-open="modal-create-routine">追加する</button>
+    </div>
+    <script>
+      document.querySelector( '.timeline' ).classList.remove( "timeline" );
+    </script>
+
+    {% endfor %}
+  </div>
+  <!-- 右下の追加ボタン -->
+  <div class="right-bottom-btn modal-open" data-modal-open="modal-create-routine">
+    <button class="">＋</button>
+  </div>
+  <!-- //右下の追加ボタン -->
+
+  <div class="modal routineCreateModal" data-modal="modal-create-routine">
+    <div class="modal-cover btn-close"></div>
+    <div class="modal-inner">
+      <div class="modal-content">
+        <div class="modal-form">
+          <form class="p-memo" action="" method="POST">{% csrf_token %}
+            {{ form.non_field_errors }}
+            <p>
+              {{form.timeline.label_tag}}
+              {{form.timeline}}
+              {{form.timeline.errors}}
+            </p>
+            <p>
+              {{form.title.label_tag}}
+              {{form.title}}
+              {{form.title.errors}}
+            </p>
+            <p>
+              {{form.description.label_tag}}
+              {{form.description}}
+              {{form.description.errors}}
+            </p>
+            <div class="fb cl2 time">
+              <div>
+                  {{form.start_time.label_tag}}
+<p class="timeInput">
+                  {{form.start_time}}
+                  </p>
+                  {{form..start_time.errors}}
+                </div>
+                <div>
+                  {{form.end_time.label_tag}}
+                  <p class="timeInput">
+                  {{form.end_time}}
+                  </p>
+                  {{form..end_time.errors}}
+                  </div>
+            </div>
+            <p>
+              {{form.category.label_tag}}
+              {{form.category}}
+              {{form.category.errors}}
+            </p>
+            <div class="tc">
+              <button class="btn btn-flat" type="submit">追加する</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+{% endblock %}
+{% block extrascripts %}
+<script src="{% static 'js/timeline.js' %}?date={% now 'YmdGi' %}""></script>
+{% endblock extrascripts %}

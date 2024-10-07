@@ -1,0 +1,297 @@
+{% extends 'app/base.html' %}
+{% block title %}タイムライン一覧{% endblock %}
+{% block content %}
+
+  <div class="heading modalContainer">
+    <div class="fb heading-wrap">
+      <div class="heading-title">
+        <h1>タイムライン一覧</h1>
+      </div>
+      <div class="icons-menu-wrap">
+        <div class="icon-item-wrap icon-menu-modal">
+          <a class="modal-open icon-menu-item fb" data-modal-open="menu1">
+            <i class="fas fa-ellipsis-h"></i>
+          </a>
+          <div class="modal icon-menu-modal-wrap" data-modal="menu1">
+            <div class="modal-cover btn-close"></div>
+            <div class="modal-inner">
+              <div class="modal-content">
+                <ul class="modal-ul">
+                  <li>
+                    <ul class="mt0">
+                      <li class="menu-li">
+                        <a class="menu-list" href="{% url 'app:TimelineCreate' %}">タイムラインを追加</a>
+                      </li>
+                    </ul>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="basewrapper" id="starting">
+    <div class="container">
+      <div class="row">
+        <div class="form-inline my-2 my-lg-0">
+          <input class="form-control mr-sm-2" type="text" placeholder="Search" v-model="search_term" aria-label="Search" />
+          <button class="btn btn-outline-success my-2 my-sm-0" v-on:click.prevent="getArticles()">
+            Search
+          </button>
+        </div>
+
+        <!-- AJAXで更新されるデータ部分 -->
+        <table class="table">
+          <thead>
+            <tr>
+              <th scope="col">🦔</th>
+              <th scope="col">タイトル</th>
+              <th scope="col">アクション</th>
+            </tr>
+          </thead>
+          <tbody>
+              <td></td>
+              <td>
+                <button class="btn btn-info" v-on:click="getArticle(article.id)">
+                  編集
+                </button>
+                <button class="btn btn-danger" v-on:click="deleteArticle(article.id)">
+                  削除
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        <!-- //AJAXで更新されるデータ部分 -->
+
+        <!-- 新規追加のAJAXのフォーム -->
+        <div class="a" id="addArticleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
+          <div role="document">
+            <div>
+              <div>
+                <h5 class="modal-title" id="exampleModalLongTitle">
+                  新規追加
+                </h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+              <form v-on:submit.prevent="addArticle()">
+                <div class="modal-body">
+                  <div class="form-group">
+                    <label for="title">タイトル</label>
+                    <input type="text" class="form-control" id="title" placeholder="タイトルを入力してください" v-model="newArticle.title" required="required" />
+                  </div>
+                  <div class="form-group">
+                    <label for="description">本文</label>
+                    <textarea class="form-control" id="description" placeholder="本文を入力してください" v-model="newArticle.description" required="required" rows="3"></textarea>
+                  </div>
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary m-progress" data-dismiss="modal">
+                    閉じる
+                  </button>
+                  <button type="submit" class="btn btn-primary">
+                    保存
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+          <div class="loading" v-if="loading===true">Loading&#8230;</div>
+        </div>
+        <!-- //新規追加のAJAXのフォーム -->
+
+
+        <!-- AJAXの編集フォーム -->
+        <div class="" id="editArticleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
+          <div role="document">
+            <div>
+              <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLongTitle">
+                  編集
+                </h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+              <form v-on:submit.prevent="updateArticle()">
+                <div class="modal-body">
+                  <div class="form-group">
+                    <label for="title">タイトル</label>
+                    <input type="text" class="form-control" id="title" placeholder="タイトルを入力してください" v-model="currentArticle.title" required="required" />
+                  </div>
+                  <div class="form-group">
+                    <label for="description">本文</label>
+                    <textarea class="form-control" id="description" placeholder="本文を入力してください" v-model="currentArticle.description" required="required" rows="3"></textarea>
+                  </div>
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary m-progress" data-dismiss="modal">
+                    閉じる
+                  </button>
+                  <button type="submit" class="btn btn-primary">
+                    保存
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+          <div class="loading" v-if="loading===true">Loading&#8230;</div>
+        </div>
+        <!-- //AJAXの編集フォーム -->
+
+
+
+      </div>
+    </div>
+    <div class="loading" v-if="loading===true">Loading&#8230;</div>
+    <div class="inner">
+
+      <div class="fb fbl card-wrapper project-list col3" v-for="article in articles">
+        <div class="card">
+          <a href="" class="card-link">
+            <div class="fb card-inner">
+              <div class="top">
+                <div class="fb title-fb fbl">
+                  <!-- <span class="text-icon fb">${article.title|first}</span> -->
+                  <p class="title">${article.title}</p>
+                </div>
+                <p class="text">${article.description}</p>
+              </div>
+              <div class="bottom">
+                <div class="icon-list fb jcfe" v-for="member in article.members">
+                  <p>${member}</p>
+                </div>
+              </div>
+            </div>
+          </a>
+        </div>
+        <!-- <div class="tc">
+          <p class="mb1">タイムラインがありません。</p>
+          <a class="btn btn-flat" href="{% url 'app:TaskProject_Create' %}">追加する</a>
+        </div> -->
+
+      </div>
+
+    </div>
+    
+  </div>
+
+
+  <!-- 右下の追加ボタン -->
+  <div class="right-bottom-btn">
+    <a href="{% url 'app:TimelineCreate' %}">＋</a>
+  </div>
+  <!-- //右下の追加ボタン -->
+
+{% endblock %}
+
+{% block extrascripts %}
+
+<script type="text/javascript">
+    Vue.http.headers.common[ "X-CSRFToken" ] = "{{ csrf_token }}";
+    new Vue( {
+        el: "#starting",
+        delimiters: [ "${", "}" ],
+        data: {
+            articles: [],
+            loading: true,
+            currentArticle: {},
+            message: null,
+            newArticle: {
+                title: null,
+                description: null,
+                create_user: null,
+                members: null
+            },
+            search_term: ""
+        },
+        // Vueインスタンスのマウント前に実行される関数
+        mounted: function () {
+            // getArticlesメソッドをマウントに設定しページが読み込まれる度に実行する
+            this.getArticles();
+        },
+        // Vueインスタンス内で実行されるすべての関数
+        methods: {
+            getArticles: function () {
+                let api_url = "/api/timeline/";
+                if ( this.search_term !== "" || this.search_term !== null ) {
+                    api_url = `/api/timeline/?search=${this.search_term}`;
+                }
+                this.loading = true;
+                this.$http
+                    .get( api_url )
+                    .then( response => {
+                        this.articles = response.data;
+                        this.loading = false;
+                    } )
+                    .catch( err => {
+                        this.loading = false;
+                        console.log( err );
+                    } );
+            },
+            getArticle: function ( id ) {
+                this.loading = true;
+                this.$http
+                    .get( `/api/timeline/${id}/` )
+                    .then( response => {
+                        this.currentArticle = response.data;
+                        $( "#editArticleModal" ).modal( "show" );
+                        this.loading = false;
+                    } )
+                    .catch( err => {
+                        this.loading = false;
+                        console.log( err );
+                    } );
+            },
+            addArticle: function () {
+                this.loading = true;
+                this.$http
+                    .post( "/api/timeline/", this.newArticle )
+                    .then( response => {
+                        this.loading = true;
+                        this.getArticles();
+                    } )
+                    .catch( err => {
+                        this.loading = true;
+                        console.log( err );
+                    } );
+            },
+            updateArticle: function () {
+                this.loading = true;
+                this.$http
+                    .put(
+                        `/api/timeline/${this.currentArticle.id}/`,
+                        this.currentArticle
+                    )
+                    .then( response => {
+                        this.loading = false;
+                        this.currentArticle = response.data;
+                        this.getArticles();
+                    } )
+                    .catch( err => {
+                        this.loading = false;
+                        console.log( err );
+                    } );
+            },
+            deleteArticle: function ( id ) {
+                this.loading = true;
+                this.$http
+                    .delete( `/api/timeline/${id}/` )
+                    .then( response => {
+                        this.loading = false;
+                        this.getArticles();
+                    } )
+                    .catch( err => {
+                        this.loading = false;
+                        console.log( err );
+                    } );
+            }
+        }
+    } );
+</script>
+{% endblock extrascripts %}
