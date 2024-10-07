@@ -31,11 +31,6 @@ def delete__project(request, project_id):
 
 # プロジェクト一覧
 class IndexView(LoginRequiredMixin,TemplateView):
-    """
-        Views for the Index Page
-    """
-    # Reverse lazy is needed since this code is before the Url coniguration
-    # is loaded
     login_url = reverse_lazy('users:log_in')
     template_name = "boards/index.html"
     form = BoardModalForm
@@ -76,12 +71,6 @@ class IndexView(LoginRequiredMixin,TemplateView):
 
 
 class BoardView(LoginRequiredMixin, BoardPermissionMixIn, TemplateView):
-    """
-        Handling the upper part of the board and initialization of 
-        the board itself.
-    """
-    # Reverse lazy is needed since this code is before the Url coniguration
-    # is loaded
     login_url = reverse_lazy('users:log_in')
     template_name = "boards/boards.html"
     board_form = BoardModalForm
@@ -143,7 +132,6 @@ class BoardView(LoginRequiredMixin, BoardPermissionMixIn, TemplateView):
             board=board).order_by('-modified')
         if board.owner == self.request.user:
             owner = True
-        # Edit Board Form
         if 'EditModal' in self.request.POST:
             member_form = self.member_form()
             board_form = self.board_form(self.request.POST)
@@ -167,7 +155,6 @@ class BoardView(LoginRequiredMixin, BoardPermissionMixIn, TemplateView):
                         }
                     )
                     
-            # Failing validation will render this template below
             return render(self.request, self.template_name,
                 {
                  'board_form': board_form, 'member_form': member_form,
@@ -178,7 +165,6 @@ class BoardView(LoginRequiredMixin, BoardPermissionMixIn, TemplateView):
                  'owner_instance' : board.owner, 'activities': activity
                 }
             )
-        # Archiving Board Form
         elif 'ArchiveBoardModal' in self.request.POST:
             board_form = self.board_form()
             member_form = self.member_form()
@@ -192,7 +178,6 @@ class BoardView(LoginRequiredMixin, BoardPermissionMixIn, TemplateView):
                 return HttpResponseRedirect(reverse('boards:home' , 
                     kwargs={'name': name 
                 }))
-            # Failing validation will render template below
             return render(self.request, self.template_name,
                 {
                     'board_form': board_form, 'member_form': member_form,
@@ -211,8 +196,7 @@ class BoardView(LoginRequiredMixin, BoardPermissionMixIn, TemplateView):
                 # 変数hostに現在のサイトのドメインを格納する
                 host = self.request.get_host()
                 member_form.invite(host, self.request.user, board)
-                # This function creates an object define the values of the message box modal
-                # Currently limited on one button since I don't need multiple buttons
+
                 # 成功した時に表示されるモーダルボックスのメッセージ
                 message_box = {
                         'title' : '成功', 'message': '招待メールを送りました。',
@@ -266,13 +250,7 @@ class BoardView(LoginRequiredMixin, BoardPermissionMixIn, TemplateView):
 
 
 
-
-# ajax implementation
-
 class GetBoardDetails(LoginRequiredMixin, BoardPermissionMixIn , AJAXBoardMixIn, View):
-    """
-        This class simply refreshes the board itself
-    """
     login_url = reverse_lazy('users:log_in')
     def get(self, *args, **kwargs):
         data = self.return_board()
@@ -281,9 +259,6 @@ class GetBoardDetails(LoginRequiredMixin, BoardPermissionMixIn , AJAXBoardMixIn,
 
 class AddColumnView(LoginRequiredMixin, BoardPermissionMixIn, 
             AJAXBoardMixIn , View):
-    """
-        This class adds a column in the board and refreshses the board itself.
-    """
     login_url = reverse_lazy('users:log_in')
     def post(self, *args, **kwargs):
         title = self.request.POST.get('title')
@@ -303,15 +278,11 @@ class AddColumnView(LoginRequiredMixin, BoardPermissionMixIn,
             board=board
             )
         data = self.return_board()
-        # needs to be changed
         return JsonResponse(data)
 
 
 class UpdateColumnView(LoginRequiredMixin, BoardPermissionMixIn,
             AJAXBoardMixIn, View):
-    """
-        This class updates the column name and refreshes the board itself
-    """
     login_url = reverse_lazy('users:log_in')
     def post(self, *args, **kwargs):
         title = self.request.POST.get('title')
@@ -326,15 +297,11 @@ class UpdateColumnView(LoginRequiredMixin, BoardPermissionMixIn,
             board=board 
         )
         data = self.return_board()
-        # needs to be changed
         return JsonResponse(data)
 
 
 class ArchiveColumnView(LoginRequiredMixin, BoardPermissionMixIn,
             AJAXBoardMixIn, View):
-    """
-        This class archives the column and refreshes the board itself
-    """
     login_url = reverse_lazy('users:log_in')
     def post(self, *args, **kwargs):
         to_update_id = self.request.POST.get('id')
@@ -348,16 +315,11 @@ class ArchiveColumnView(LoginRequiredMixin, BoardPermissionMixIn,
             board=board
         )
         data = self.return_board()
-        # needs to be changed
         return JsonResponse(data)
 
 
 class AddCardView(LoginRequiredMixin, BoardPermissionMixIn,
         AJAXBoardMixIn, View):
-    """
-        This class adds a card and refreshes the board itself to reflect
-        those changes
-    """
     login_url = reverse_lazy('users:log_in')
     def post(self, *args, **kwargs):
         name = self.request.POST.get('name')
@@ -378,9 +340,6 @@ class AddCardView(LoginRequiredMixin, BoardPermissionMixIn,
 
 
 class GetCardDetails(LoginRequiredMixin, BoardPermissionMixIn, AJAXCardMixIn, View):
-    """
-        This class reloads the card modal.
-    """
     login_url = reverse_lazy('users:log_in')
     def get(self, *args, **kwargs):
         data=self.return_card()
@@ -389,9 +348,6 @@ class GetCardDetails(LoginRequiredMixin, BoardPermissionMixIn, AJAXCardMixIn, Vi
 
 class UpdateCardTitle(LoginRequiredMixin, BoardPermissionMixIn,
         AJAXCardMixIn, View):
-    """
-        This class updates the card title and reloads the card modal
-    """
     login_url = reverse_lazy('users:log_in')
     def post(self, *args, **kwargs):
         name =  self.request.POST.get('title')
@@ -411,9 +367,7 @@ class UpdateCardTitle(LoginRequiredMixin, BoardPermissionMixIn,
 
 
 class UpdateCardDescription(LoginRequiredMixin, BoardPermissionMixIn, View):
-    """
-        This class updates the card description and reloads the card modal
-    """
+
     login_url = reverse_lazy('users:log_in')
     def post(self, *args, **kwargs):
         description =  self.request.POST.get('description')
@@ -431,10 +385,7 @@ class UpdateCardDescription(LoginRequiredMixin, BoardPermissionMixIn, View):
 
 
 class AddCommentCard(LoginRequiredMixin, BoardPermissionMixIn, AJAXCardMixIn, View):
-    """
-        This class adds a comment to the card and refreshes the comment section
-        of the modal
-    """
+
     login_url = reverse_lazy('users:log_in')
     def post(self, *args, **kwargs):
         comment =  self.request.POST.get('comment')
@@ -456,10 +407,7 @@ class AddCommentCard(LoginRequiredMixin, BoardPermissionMixIn, AJAXCardMixIn, Vi
 
 class DeleteComment(LoginRequiredMixin, BoardPermissionMixIn,
         AJAXCardMixIn, View):
-    """
-        This class deletes a comment and refreshes the comment section of the 
-        modal
-    """
+
     login_url = reverse_lazy('users:log_in')
     def post(self, *args, **kwargs):
         comment_id = self.request.POST.get('comment_id')
@@ -492,9 +440,7 @@ class GetBoardStream(LoginRequiredMixin, BoardPermissionMixIn, TemplateView):
 
 # ドラッグアンドドロップでカードを移動したとき
 class TransferCard(LoginRequiredMixin, BoardPermissionMixIn, AJAXBoardMixIn, View):
-    """
-        This catches the drag and drop of a user
-    """
+
     login_url = reverse_lazy('users:log_in')
     def post(self, *args, **kwargs):
         card_id = self.request.POST.get('card_id')
@@ -510,7 +456,6 @@ class TransferCard(LoginRequiredMixin, BoardPermissionMixIn, AJAXBoardMixIn, Vie
             Column, pk=self.request.POST.get('from_column_id')
         )
         
-        # activity stream
         card.activity.create(
             user=self.request.user,
             action=ACTIVITY_ACTION['TRANSFERRED'],
@@ -525,9 +470,7 @@ class TransferCard(LoginRequiredMixin, BoardPermissionMixIn, AJAXBoardMixIn, Vie
 
 # メンバーがアサインする
 class AssignMembers(LoginRequiredMixin, BoardPermissionMixIn, AJAXCardMixIn, View):
-    """
-        This class assigns members to a card. 
-    """
+
     login_url = reverse_lazy('users:log_in')
     def post(self, *args, **kwargs):
         selected = self.request.POST.getlist('selected[]')
@@ -541,7 +484,6 @@ class AssignMembers(LoginRequiredMixin, BoardPermissionMixIn, AJAXCardMixIn, Vie
             )
             exists= get_object_or_None(
                 CardMember, board_member=board_member, card=card_instance)
-            # checks if the assigned member is just archived
             if exists:
                 if exists.archived:
                     exists.archived = False
@@ -580,9 +522,7 @@ class AssignMembers(LoginRequiredMixin, BoardPermissionMixIn, AJAXCardMixIn, Vie
 
 
 class GetMembers(LoginRequiredMixin, BoardPermissionMixIn, View):
-    """
-        This class fetches all the members for further use
-    """
+
     login_url = reverse_lazy('users:log_in')
     def get(self, *args, **kwargs):
         card_id = self.request.GET.get('card_id')
@@ -594,12 +534,7 @@ class GetMembers(LoginRequiredMixin, BoardPermissionMixIn, View):
 
 
 class DueDate(LoginRequiredMixin, BoardPermissionMixIn, View):
-    """
-        GET: This class gets the due date of a card when get request is called.
-        
-        POST: When post request is called, it updates the due date value
-            of the value itself.
-    """
+
     login_url = reverse_lazy('users:log_in')
     def get(self, *args, **kwargs):
         card_id = self.request.GET.get('card_id')
@@ -629,9 +564,7 @@ class DueDate(LoginRequiredMixin, BoardPermissionMixIn, View):
 
 
 class ArhiveCard(LoginRequiredMixin, BoardPermissionMixIn, AJAXBoardMixIn, View):
-    """
-        This class archives the card that is currently selected.
-    """
+
     login_url = reverse_lazy('users:log_in')
     def post(self, *args, **kwargs):
         print('hi')
@@ -649,9 +582,7 @@ class ArhiveCard(LoginRequiredMixin, BoardPermissionMixIn, AJAXBoardMixIn, View)
 
 
 class UserValidationView(TemplateView):
-    """
-        Views for the User Validation Page
-    """
+
     template_name = "boards/user_validation.html"
     error_validation = "boards/logged_in_error.html"
     form = UserValidationForm
@@ -663,11 +594,9 @@ class UserValidationView(TemplateView):
         email = referral.email
         form = self.form()
         if referral:
-            # Checking if the user exists
             user = get_object_or_None(User, email=referral.email)
             if user:
                 proceed = False
-                # Check if the user is already logged in
                 if not self.request.user.is_authenticated:
 
                     user = form.login(self.request, user=user)
@@ -680,7 +609,6 @@ class UserValidationView(TemplateView):
                         proceed = True
                        
                 if proceed:
-                    # falls short when the logged in user is not the same referral email
                     return render(self.request, self.template_name,
                         {'form':form, 'email' : email,
                          'board': board , 'account' : True,
@@ -706,7 +634,7 @@ class UserValidationView(TemplateView):
         board = referral.board_member.board
         email = referral.email
         if 'JoinBoard' in self.request.POST:
-            # User Is Already Registered
+            # ユーザがすでに登録されているとき
 
             board_id = form.join_board(user, token, board)
             return HttpResponseRedirect(reverse('boards:board' , kwargs={'id':board_id  }))

@@ -12,9 +12,6 @@ from annoying.functions import get_object_or_None
 
 
 class AJAXBoardMixIn():
-    """
-        for returning the necessary data to refresh the board
-    """
     def return_board(self):
         board_id = self.kwargs.get('id')
         board = get_object_or_404(Board,pk=self.kwargs.get('id'))
@@ -32,9 +29,6 @@ class AJAXBoardMixIn():
         return data
 
 class AJAXCardMixIn():
-    """
-        for returning the necessary data to refresh the card
-    """
     def return_card(self):
         card_id = 0
         if self.request.method == "GET":
@@ -42,7 +36,6 @@ class AJAXCardMixIn():
         else:
             card_id = self.request.POST.get('card_id')
         board = get_object_or_404(Board,pk=self.kwargs.get('id'))
-        # brackets are needed since they are single objects
         card = [get_object_or_404(Card,pk=card_id)]
         card_comments = CardComment.objects.filter(
             card__id=card_id, archived=False).select_related('user').order_by('-pk')
@@ -63,14 +56,10 @@ class AJAXCardMixIn():
         return data
 
 class BoardPermissionMixIn():
-    """
-        Get if the one accessing the url is a board member.
-        If not board member, throw bad request.
-    """
     error_board = "boards/error_member.html"
     def dispatch(self, request, *args, **kwargs):
         board_id = self.kwargs.get('id')
-        # Permission Denied if 404
+        # 404の場合、許可しない
         exists = get_object_or_None(
             BoardMember, board__id=board_id, user__pk=self.request.user.id,
             archived=False)

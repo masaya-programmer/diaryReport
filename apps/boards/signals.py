@@ -15,6 +15,5 @@ def sending_email_board_member(sender, instance, **kwargs):
     new_board_member.is_confirmed = False
     new_board_member.save()
     instance.board_member = new_board_member
-    # Cleaning the temporary attribute that was passed to the instance before saving
     del instance.user
     del instance.board
