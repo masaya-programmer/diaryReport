@@ -13,11 +13,6 @@ from django.contrib.auth.models import User
 from apps.boards.models import BoardMember
 
 class ActivityView(LoginRequiredMixin,TemplateView):
-    """
-        Views for the User Activity Page
-    """
-    # Reverse lazy is needed since this code is before the Url coniguration
-    # is loaded
     login_url = reverse_lazy('users:log_in')
     template_name = "activity/activity.html"
 
